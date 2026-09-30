@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OMMA · WhatsApp Asistanı Demosu</title>
+<meta name="description" content="OMMA için hazırlanmış, 8 dilde satış yapan akıllı WhatsApp sipariş asistanı demosu.">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="OMMA · 8 dilli WhatsApp satış asistanı (özel demo)">
+<meta property="og:description" content="Müşteriniz hangi dilde yazarsa yazsın: isimle hitap, anlık fiyat, fotoğraf, indirim ve sipariş.">
+<meta property="og:image" content="img/showroom.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;600&display=swap">
+<style>
+:root{
+  --ground:#F6F1EA; --panel:#FFFDFA; --ink:#2A2118; --muted:#76695B; --line:#E6DccF;
+  --accent:#9A6B2F; --accent-soft:#F1E4D0; --ok:#2F7A55; --ok-soft:#DDF0E4;
+  --chat:#EFE6D8; --in:#FFFFFF; --out:#DCF3D0; --wa:#1F5C4B;
+  --display:"Cormorant Garamond",Georgia,serif; --body:"Manrope",ui-sans-serif,system-ui,sans-serif;
+  --ar:"Noto Sans Arabic","Manrope",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --ground:#16120E;--panel:#211B15;--ink:#F1E9DE;--muted:#B5A792;--line:#3A3027;
+  --accent:#D9A866;--accent-soft:#3A2C1C;--ok:#74CFA0;--ok-soft:#18362A;
+  --chat:#14110D;--in:#2A231C;--out:#1E4034;--wa:#0F3A2F;}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --ground:#16120E;--panel:#211B15;--ink:#F1E9DE;--muted:#B5A792;--line:#3A3027;
+  --accent:#D9A866;--accent-soft:#3A2C1C;--ok:#74CFA0;--ok-soft:#18362A;
+  --chat:#14110D;--in:#2A231C;--out:#1E4034;--wa:#0F3A2F;}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55;padding:28px 16px 64px;overflow-x:hidden}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:34px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(32px,5.4vw,56px);line-height:1.02;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(26px,3.6vw,36px);line-height:1.1;margin:0 0 6px}
+.lead{margin:0;color:var(--muted);max-width:66ch}
+header{display:grid;grid-template-columns:1.3fr .7fr;gap:28px;align-items:center}
+header .txt{display:grid;gap:14px}
+header img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:18px;border:1px solid var(--line)}
+.facts{display:flex;flex-wrap:wrap;gap:10px}
+.fact{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 14px;display:grid;min-width:120px}
+.fact b{font-family:var(--display);font-size:26px;line-height:1.05;color:var(--accent)}
+.fact span{font-size:12.5px;color:var(--muted)}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+[role=tab]{font:inherit;font-weight:600;font-size:14px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted);cursor:pointer;display:flex;gap:6px;align-items:baseline}
+[role=tab] small{font-weight:500;font-size:11.5px;opacity:.8}
+[role=tab][aria-selected=true]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.demo{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:24px;align-items:start}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.btn{font:inherit;font-weight:700;font-size:14px;border-radius:999px;padding:9px 16px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.hint{font-size:13px;color:var(--muted);margin:0}
+/* phone */
+.phone{border-radius:28px;border:1px solid var(--line);background:var(--panel);overflow:hidden;box-shadow:0 18px 50px -24px rgba(60,40,15,.35);display:flex;flex-direction:column;height:680px;max-height:82vh}
+.wa-top{background:var(--wa);color:#fff;display:flex;gap:10px;align-items:center;padding:10px 14px}
+.wa-top img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.wa-top b{display:block;font-size:15px}
+.wa-top span{font-size:12px;opacity:.85}
+.chat{flex:1;overflow-y:auto;background:var(--chat);padding:14px 10px;display:flex;flex-direction:column;gap:6px;scroll-behavior:smooth}
+.chat.rtl .msg{direction:rtl;text-align:right;font-family:var(--ar)}
+.day{align-self:center;font-size:11.5px;background:var(--panel);color:var(--muted);border-radius:8px;padding:3px 10px;margin-bottom:4px}
+.msg{max-width:84%;padding:7px 10px 18px;border-radius:10px;font-size:14px;line-height:1.45;position:relative;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 1px 1px rgba(0,0,0,.06)}
+.msg.in{align-self:flex-start;background:var(--in);border-top-left-radius:2px}
+.msg.out{align-self:flex-end;background:var(--out);border-top-right-radius:2px}
+.msg time{position:absolute;right:8px;bottom:3px;font-size:10.5px;color:var(--muted);direction:ltr}
+.msg.out time::after{content:" ✓✓";color:#3A9BDC}
+.msg .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;white-space:normal}
+.msg .grid figure{margin:0;border-radius:8px;overflow:hidden;background:var(--panel)}
+.msg .grid img{width:100%;aspect-ratio:1/1.3;object-fit:cover;display:block}
+.msg .grid figcaption{font-size:12px;font-weight:600;padding:4px 6px}
+.msg .one{display:grid;gap:6px;margin-top:8px}
+.msg .one img{width:100%;border-radius:8px;display:block;max-height:240px;object-fit:cover}
+.typing{align-self:flex-start;background:var(--in);border-radius:10px;padding:10px 12px;display:flex;gap:4px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:b 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-3px)}}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 10px;background:var(--panel);border-top:1px solid var(--line)}
+.chips button{flex:none;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:var(--ground);color:var(--ink);border-radius:999px;padding:6px 11px;cursor:pointer}
+.chips.rtl button{font-family:var(--ar)}
+form.send{display:flex;gap:8px;padding:8px 10px;background:var(--panel);border-top:1px solid var(--line)}
+form.send input{flex:1;min-width:0;font:inherit;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:9px 14px;background:var(--ground);color:var(--ink)}
+form.send button{border:0;border-radius:50%;width:40px;height:40px;background:var(--wa);color:#fff;font-size:17px;cursor:pointer}
+/* side panel */
+.side{display:grid;gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px}
+.card h3{margin:0 0 10px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px}
+.kv dt{color:var(--muted)}.kv dd{margin:0;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
+th{font-size:12px;color:var(--muted);font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.tot td{font-weight:700;border-bottom:0;font-size:15px}
+tr.disc td{color:var(--ok)}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--accent-soft);color:var(--accent)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.log{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:13.5px;max-height:220px;overflow-y:auto}
+.log li{display:flex;gap:8px}
+.log li::before{content:"●";color:var(--accent);font-size:10px;line-height:2}
+.empty{color:var(--muted);font-size:14px;margin:0}
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.feat div{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+.feat b{display:block;font-size:15.5px;margin-bottom:4px}
+.feat p{margin:0;font-size:14px;color:var(--muted)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;counter-reset:s}
+.steps div{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;counter-increment:s}
+.steps div::before{content:counter(s);display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;margin-bottom:8px}
+.steps b{display:block}.steps p{margin:4px 0 0;font-size:14px;color:var(--muted)}
+.cta{background:var(--wa);color:#fff;border-radius:22px;padding:26px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+.cta h2{color:#fff}.cta p{margin:0;opacity:.85}
+.cta a{background:#25D366;color:#0B2E22;font-weight:800;text-decoration:none;border-radius:999px;padding:12px 20px}
+.note{font-size:13px;color:var(--muted);margin:0}
+@media (max-width:900px){
+  header{grid-template-columns:1fr} header img{max-height:360px;aspect-ratio:auto}
+  .demo{grid-template-columns:1fr} .feat,.steps{grid-template-columns:1fr}
+  .phone{height:600px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="txt">
+    <div class="eyebrow">OMMA için özel demo · ücretsiz</div>
+    <h1>Yabancı müşteriniz yazar, asistanınız 8 dilde satış yapar.</h1>
+    <p class="lead">Rusya'dan, Avrupa'dan ya da Körfez'den gelen WhatsApp mesajları gece gündüz yanıtsız kalmaz. Asistan müşteriye adıyla hitap eder, renkleri fotoğrafla gösterir, toptan indirimle fiyatı anında hesaplar ve siparişi alır. Siparişin Türkçe özeti size gelir.</p>
+    <div class="facts">
+      <div class="fact"><b>8 dil</b><span>otomatik algılar</span></div>
+      <div class="fact"><b>7/24</b><span>gece de satış</span></div>
+      <div class="fact"><b>Anlık</b><span>fiyat + indirim hesabı</span></div>
+      <div class="fact"><b>Türkçe</b><span>sipariş özeti size</span></div>
+    </div>
+  </div>
+  <img src="img/showroom.jpg" alt="OMMA premium jakar şönil kumaş, showroom">
+</header>
+
+<section style="display:grid;gap:14px" aria-label="Canlı demo">
+  <div>
+    <h2>Deneyin: müşteri sizsiniz</h2>
+    <p class="lead">Bir dil seçip ▶ ile hazır konuşmayı izleyin ya da alttaki kutuya istediğiniz dilde kendiniz yazın. Örneğin <i>"Меня зовут Ольга, 300 м серебро"</i>. Asistan dili kendisi algılar.</p>
+  </div>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div class="demo">
+    <div style="display:grid;gap:10px">
+      <div class="bar">
+        <button class="btn" id="play">▶ Konuşmayı izle</button>
+        <button class="btn ghost" id="reset">Sıfırla</button>
+      </div>
+      <div class="phone">
+        <div class="wa-top"><img src="img/asistan.jpg" alt=""><div><b>OMMA · Anna</b><span id="status">çevrimiçi</span></div></div>
+        <div class="chat" id="chat" aria-live="polite"></div>
+        <div class="chips" id="chips"></div>
+        <form class="send" id="form"><input id="inp" autocomplete="off" placeholder="Mesaj yazın…" aria-label="Müşteri mesajı"><button aria-label="Gönder">➤</button></form>
+      </div>
+    </div>
+    <div class="side">
+      <div class="card">
+        <h3>Size gelen sipariş özeti (Türkçe)</h3>
+        <dl class="kv">
+          <dt>Müşteri</dt><dd id="pName">—</dd>
+          <dt>Dil</dt><dd id="pLang">—</dd>
+          <dt>Durum</dt><dd><span class="pill" id="pState">Yazışma bekleniyor</span></dd>
+        </dl>
+        <div id="pTable" style="margin-top:12px"><p class="empty">Müşteri renk ve miktar yazınca sipariş burada anında oluşur.</p></div>
+      </div>
+      <div class="card">
+        <h3>Asistan ne yaptı?</h3>
+        <ul class="log" id="log"><li>Müşteri mesajı bekleniyor…</li></ul>
+      </div>
+    </div>
+  </div>
+  <p class="note">Demodaki metre fiyatı (8,40 $), indirim oranları, kurlar ve renk adları örnektir. Kurulumda sizin gerçek fiyat listeniz, ürün kodlarınız ve fotoğraflarınız kullanılır.</p>
+</section>
+
+<section style="display:grid;gap:14px">
+  <h2>Asistanın yaptıkları</h2>
+  <div class="feat">
+    <div><b>🌍 8 dilde, ana dil gibi</b><p>Rusça, İngilizce, Almanca, Fransızca, İtalyanca, Lehçe, Arapça ve Türkçe. Müşteri hangi dilde yazarsa o dilde cevap verir.</p></div>
+    <div><b>🙋 Her müşteriye adıyla</b><p>Müşterinin adını öğrenir ve konuşma boyunca adıyla hitap eder. Müşteri kendini özel hisseder.</p></div>
+    <div><b>🧮 Anlık fiyat hesabı</b><p>Metre ya da top yazılsa da hesaplar. Toptan kademe indirimini ve müşterinin kendi para birimindeki karşılığını anında gösterir.</p></div>
+    <div><b>🖼️ Fotoğraf gönderir</b><p>Renk kartelasını, doku yakın çekimini ve showroom görselini sohbete kendisi gönderir.</p></div>
+    <div><b>🎁 Özel indirim + satış artırma</b><p>İlk siparişe kişisel indirim tanımlar. "20 m daha eklerseniz indiriminiz %8 olur" gibi önerilerle sepeti büyütür.</p></div>
+    <div><b>📋 Sipariş size Türkçe</b><p>Onaylanan sipariş numarasıyla kaydedilir, özeti size Türkçe gelir. Proforma ve kargo bilgisini ekibiniz sabah gönderir.</p></div>
+  </div>
+</section>
+
+<section style="display:grid;gap:14px">
+  <h2>Kurulum 3 adım</h2>
+  <div class="steps">
+    <div><b>Fiyat listesi ve fotoğraflar</b><p>Ürün kodlarınızı, metre fiyatlarınızı, indirim kurallarınızı ve fotoğraflarınızı gönderirsiniz.</p></div>
+    <div><b>WhatsApp numaranız bağlanır</b><p>Mevcut WhatsApp Business numaranızla çalışır. Müşterileriniz yeni bir numara öğrenmek zorunda kalmaz.</p></div>
+    <div><b>Yayında</b><p>Test edip birlikte son hâlini veririz. Asistan birkaç gün içinde gerçek müşterilerinize cevap vermeye başlar.</p></div>
+  </div>
+</section>
+
+<section class="cta">
+  <div><h2>Beğendiyseniz 15 dakikalık kısa bir görüşme yapalım</h2><p>Ferhat · 0531 775 59 12</p></div>
+  <a id="cta" href="#">WhatsApp'tan yazın</a>
+</section>
+
+</div>
+
+<script>
+const PRICE=8.40, ROLL=50, PERSONAL=3;
+const TIERS=[[600,12],[300,8],[150,5]];
+const COLOR_IMG=["img/renk-inci.jpg","img/renk-kum.jpg","img/renk-bronz.jpg","img/renk-gumus.jpg"];
+const COLOR_TR=["İnci","Kum","Bronz","Gümüş"];
+const COLOR_RX=[
+  /жемчуж|pearl|perl[ea]|perł|لؤلؤ|(?<![\p{L}])inci/iu,
+  /песоч|песок|(?<![\p{L}])sand|sable|sabbia|piask|رمل|(?<![\p{L}])kum(?![\p{L}])/iu,
+  /бронз|bronz|brąz|برونز/iu,
+  /серебр|silver|silber|argent|srebr|فضي|فضية|gümüş|gumus/iu
+];
+const RX={
+  roll:/рулон|(?<![\p{L}])roll|rolle|rouleau|rotol|rolk|rolek|لفة|لفات|(?<![\p{L}])top(?![\p{L}])|(?<![\p{L}])topu/iu,
+  price:/цен|стоим|сколько|price|cost|how much|preis|kostet|kosten|prix|combien|prezzo|costa|(?<![\p{L}])cen[aęy]|kosztuj|سعر|(?<![\p{L}])كم(?![\p{L}])|fiyat|ne kadar/iu,
+  photo:/фото|картин|photo|picture|(?<![\p{L}])pics?(?![\p{L}])|image|bild|foto|zdję|صور|resim|görsel/iu,
+  catalog:/цвет|каталог|ассортимент|colou?rs?|catalog|farbe|katalog|couleur|coloris|colori|kolor|ألوان|لون|renk/iu,
+  confirm:/(?<![\p{L}])(да|yes|ok|okay|ja|oui|sì|si|tak|evet|نعم)(?![\p{L}])|подтвержд|confirm|bestätig|confermo|potwierdz|أؤكد|تأكيد|onayl/iu,
+  thanks:/спасибо|thank|danke|merci|grazie|dzięk|شكر|teşekkür|sağol/iu,
+  greet:/здравств|привет|(?<![\p{L}])(hello|hi|hey|hallo|salut|ciao|cześć|selam)(?![\p{L}])|guten|bonjour|buongiorno|dzień dobry|السلام|مرحب|merhaba/iu,
+  name:/(?:меня зовут|это|я|my name is|i am|i'm|this is|ich heiße|ich heisse|mein name ist|ich bin|je m'appelle|je m’appelle|je suis|mi chiamo|sono|mam na imię|nazywam się|jestem|اسمي|adım|ismim|ben)\s+([\p{L}][\p{L}'’-]*)/iu
+};
+
+const L={
+ ru:{tab:"Русский",tr:"Rusça",loc:"ru-RU",cur:"RUB",rate:82,u:"м",city:"Москва",
+  colors:["Жемчуг","Песочный","Бронза","Серебро"],prod:"жаккард шенилл OMMA",
+  greet:"Здравствуйте! 👋 Я Анна, онлайн-консультант OMMA. Как я могу к вам обращаться?",
+  hi:"Очень приятно, {n}! 😊 Мы производим премиальные портьерные ткани в Турции и работаем только оптом. Могу показать цвета, рассчитать цену или сразу оформить заказ.",
+  catalog:"{n}, вот наш хит продаж — {prod}, ширина 280 см. Доступно 4 цвета:",
+  price:"Цена — {p} за метр.\nОптовые скидки:\n• от 150 м — 5%\n• от 300 м — 8%\n• от 600 м — 12%\n🎁 {n}, для вас дополнительно персональная скидка 3% на первый заказ.\nНапишите цвет и количество, например: «200 м песочный».",
+  photos:"Конечно, {n}! Вот фактура крупным планом и ткань в нашем шоуруме:",
+  added:"Отлично, {n}! Посчитала ваш заказ:",ask:"Подтверждаете заказ?",
+  total:"Всего",sub:"Сумма",tier:"Оптовая скидка",pers:"Персональная скидка",pay:"К оплате",
+  nocart:"{n}, в заказе пока ничего нет. Напишите цвет и количество, например: «200 м песочный».",
+  askColor:"Какой цвет вам нужен? У нас есть: Жемчуг, Песочный, Бронза, Серебро.",
+  confirmed:"Заказ № {id} принят ✅\nСпасибо, {n}! Менеджер отправит вам счёт-проформу и стоимость доставки завтра до 10:00 (по Стамбулу). Будем рады долгому сотрудничеству! 🤝",
+  fallback:"{n}, я передам ваш вопрос менеджеру, он скоро ответит. А пока могу показать цвета, рассчитать цену или оформить заказ.",
+  thanks:"Всегда рады помочь, {n}! 🌿",
+  upsell:"💡 Добавьте ещё {x} м — и скидка вырастет до {y}%.",
+  chips:["Покажите цвета","Какая цена?","Фото ткани","200 м песочный и 3 рулона бронза","Да, подтверждаю"],
+  script:["Здравствуйте!","Меня зовут Ирина, у меня салон штор в Москве","Покажите, какие есть цвета","Какая цена за метр?","200 м песочный и 3 рулона бронза","Да, подтверждаю"]},
+ en:{tab:"English",tr:"İngilizce",loc:"en-GB",cur:"GBP",rate:0.74,u:"m",city:"London",
+  colors:["Pearl","Sand","Bronze","Silver"],prod:"OMMA Jacquard Chenille",
+  greet:"Hello! 👋 I'm Anna, OMMA's online consultant. May I have your name?",
+  hi:"Nice to meet you, {n}! 😊 We manufacture premium curtain fabrics in Turkey and sell wholesale only. I can show you our colours, calculate a price or take your order right away.",
+  catalog:"{n}, here is our best-seller — {prod}, 280 cm wide. Available in 4 colours:",
+  price:"The price is {p} per metre.\nWholesale discounts:\n• from 150 m — 5%\n• from 300 m — 8%\n• from 600 m — 12%\n🎁 {n}, you also get a personal 3% discount on your first order.\nJust write the colour and quantity, e.g. “200 m sand”.",
+  photos:"Of course, {n}! Here's a close-up of the texture and the fabric in our showroom:",
+  added:"Great, {n}! Here's your order:",ask:"Shall I confirm the order?",
+  total:"Total",sub:"Subtotal",tier:"Wholesale discount",pers:"Personal discount",pay:"To pay",
+  nocart:"{n}, your order is empty for now. Write the colour and quantity, e.g. “200 m sand”.",
+  askColor:"Which colour would you like? We have Pearl, Sand, Bronze and Silver.",
+  confirmed:"Order No. {id} confirmed ✅\nThank you, {n}! Our manager will send you the proforma invoice and shipping cost tomorrow by 10:00 (Istanbul time). We look forward to working with you! 🤝",
+  fallback:"{n}, I'll pass your question to our manager, who will reply shortly. Meanwhile, I can show colours, calculate a price or take your order.",
+  thanks:"Always happy to help, {n}! 🌿",
+  upsell:"💡 Add {x} m more and your discount goes up to {y}%.",
+  chips:["Show colours","What's the price?","Fabric photos","200 m sand and 3 rolls bronze","Yes, confirm"],
+  script:["Hi!","My name is James, I run a curtain shop in London","Which colours do you have?","What's the price per metre?","350 m silver and 2 rolls pearl","Yes, confirm"]},
+ de:{tab:"Deutsch",tr:"Almanca",loc:"de-DE",cur:"EUR",rate:0.86,u:"m",city:"Berlin",
+  colors:["Perle","Sand","Bronze","Silber"],prod:"OMMA Jacquard-Chenille",
+  greet:"Guten Tag! 👋 Ich bin Anna, die Online-Beraterin von OMMA. Wie darf ich Sie ansprechen?",
+  hi:"Freut mich, {n}! 😊 Wir produzieren hochwertige Vorhangstoffe in der Türkei und verkaufen ausschließlich im Großhandel. Ich kann Ihnen die Farben zeigen, einen Preis berechnen oder direkt Ihre Bestellung aufnehmen.",
+  catalog:"{n}, hier ist unser Bestseller — {prod}, 280 cm breit. Erhältlich in 4 Farben:",
+  price:"Der Preis beträgt {p} pro Meter.\nMengenrabatte:\n• ab 150 m — 5 %\n• ab 300 m — 8 %\n• ab 600 m — 12 %\n🎁 {n}, für Sie gibt es zusätzlich 3 % persönlichen Rabatt auf die erste Bestellung.\nSchreiben Sie einfach Farbe und Menge, z. B. „200 m Sand“.",
+  photos:"Gerne, {n}! Hier sehen Sie die Struktur in Nahaufnahme und den Stoff in unserem Showroom:",
+  added:"Sehr gut, {n}! Hier ist Ihre Bestellung:",ask:"Soll ich die Bestellung bestätigen?",
+  total:"Gesamt",sub:"Zwischensumme",tier:"Mengenrabatt",pers:"Persönlicher Rabatt",pay:"Zu zahlen",
+  nocart:"{n}, Ihre Bestellung ist noch leer. Schreiben Sie Farbe und Menge, z. B. „200 m Sand“.",
+  askColor:"Welche Farbe wünschen Sie? Wir haben Perle, Sand, Bronze und Silber.",
+  confirmed:"Bestellung Nr. {id} bestätigt ✅\nVielen Dank, {n}! Unser Manager sendet Ihnen morgen bis 10:00 Uhr (Istanbuler Zeit) die Proforma-Rechnung und die Versandkosten. Wir freuen uns auf die Zusammenarbeit! 🤝",
+  fallback:"{n}, ich leite Ihre Frage an unseren Manager weiter, er antwortet Ihnen in Kürze. In der Zwischenzeit kann ich Ihnen Farben zeigen, Preise berechnen oder Ihre Bestellung aufnehmen.",
+  thanks:"Sehr gerne, {n}! 🌿",
+  upsell:"💡 Mit {x} m mehr steigt Ihr Rabatt auf {y} %.",
+  chips:["Farben zeigen","Was kostet der Meter?","Fotos vom Stoff","200 m Sand und 3 Rollen Bronze","Ja, bestätigen"],
+  script:["Guten Tag!","Ich heiße Markus, wir haben ein Raumausstattungsgeschäft in Berlin","Welche Farben haben Sie?","Was kostet der Meter?","400 m Perle und 100 m Silber","Ja, bestätigen"]},
+ fr:{tab:"Français",tr:"Fransızca",loc:"fr-FR",cur:"EUR",rate:0.86,u:"m",city:"Lyon",
+  colors:["Perle","Sable","Bronze","Argent"],prod:"jacquard chenille OMMA",
+  greet:"Bonjour ! 👋 Je suis Anna, conseillère en ligne chez OMMA. Comment puis-je vous appeler ?",
+  hi:"Enchantée, {n} ! 😊 Nous fabriquons des tissus d'ameublement haut de gamme en Turquie et vendons uniquement en gros. Je peux vous montrer nos coloris, calculer un prix ou prendre votre commande tout de suite.",
+  catalog:"{n}, voici notre best-seller — {prod}, largeur 280 cm. Disponible en 4 coloris :",
+  price:"Le prix est de {p} le mètre.\nRemises de gros :\n• dès 150 m — 5 %\n• dès 300 m — 8 %\n• dès 600 m — 12 %\n🎁 {n}, vous bénéficiez aussi d'une remise personnelle de 3 % sur votre première commande.\nÉcrivez simplement le coloris et la quantité, par ex. « 200 m sable ».",
+  photos:"Bien sûr, {n} ! Voici la texture en gros plan et le tissu dans notre showroom :",
+  added:"Parfait, {n} ! Voici votre commande :",ask:"Je confirme la commande ?",
+  total:"Total",sub:"Sous-total",tier:"Remise de gros",pers:"Remise personnelle",pay:"À payer",
+  nocart:"{n}, votre commande est vide pour l'instant. Écrivez le coloris et la quantité, par ex. « 200 m sable ».",
+  askColor:"Quel coloris souhaitez-vous ? Nous avons Perle, Sable, Bronze et Argent.",
+  confirmed:"Commande n° {id} confirmée ✅\nMerci, {n} ! Notre responsable vous enverra la facture proforma et les frais de livraison demain avant 10h00 (heure d'Istanbul). Au plaisir de travailler avec vous ! 🤝",
+  fallback:"{n}, je transmets votre question à notre responsable, qui vous répondra rapidement. En attendant, je peux vous montrer les coloris, calculer un prix ou prendre votre commande.",
+  thanks:"Avec plaisir, {n} ! 🌿",
+  upsell:"💡 Ajoutez encore {x} m et votre remise passe à {y} %.",
+  chips:["Voir les coloris","Quel est le prix ?","Photos du tissu","200 m sable et 3 rouleaux bronze","Oui, je confirme"],
+  script:["Bonjour !","Je m'appelle Claire, j'ai une boutique de rideaux à Lyon","Quels coloris avez-vous ?","Quel est le prix au mètre ?","250 m bronze et 2 rouleaux argent","Oui, je confirme"]},
+ it:{tab:"Italiano",tr:"İtalyanca",loc:"it-IT",cur:"EUR",rate:0.86,u:"m",city:"Milano",
+  colors:["Perla","Sabbia","Bronzo","Argento"],prod:"jacquard ciniglia OMMA",
+  greet:"Buongiorno! 👋 Sono Anna, la consulente online di OMMA. Come posso chiamarla?",
+  hi:"Piacere, {n}! 😊 Produciamo tessuti per tende di alta qualità in Turchia e vendiamo solo all'ingrosso. Posso mostrarle i colori, calcolare un prezzo o prendere subito il suo ordine.",
+  catalog:"{n}, ecco il nostro best seller — {prod}, altezza 280 cm. Disponibile in 4 colori:",
+  price:"Il prezzo è {p} al metro.\nSconti all'ingrosso:\n• da 150 m — 5%\n• da 300 m — 8%\n• da 600 m — 12%\n🎁 {n}, per lei c'è anche uno sconto personale del 3% sul primo ordine.\nScriva il colore e la quantità, ad es. «200 m sabbia».",
+  photos:"Certo, {n}! Ecco la texture da vicino e il tessuto nel nostro showroom:",
+  added:"Perfetto, {n}! Ecco il suo ordine:",ask:"Confermo l'ordine?",
+  total:"Totale",sub:"Subtotale",tier:"Sconto all'ingrosso",pers:"Sconto personale",pay:"Da pagare",
+  nocart:"{n}, il suo ordine è ancora vuoto. Scriva il colore e la quantità, ad es. «200 m sabbia».",
+  askColor:"Quale colore desidera? Abbiamo Perla, Sabbia, Bronzo e Argento.",
+  confirmed:"Ordine n. {id} confermato ✅\nGrazie, {n}! Il nostro responsabile le invierà la fattura proforma e il costo di spedizione domani entro le 10:00 (ora di Istanbul). Saremo felici di collaborare con lei! 🤝",
+  fallback:"{n}, inoltro la sua domanda al nostro responsabile, che le risponderà a breve. Nel frattempo posso mostrarle i colori, calcolare un prezzo o prendere il suo ordine.",
+  thanks:"Sempre a disposizione, {n}! 🌿",
+  upsell:"💡 Aggiunga altri {x} m e lo sconto sale al {y}%.",
+  chips:["Mostri i colori","Qual è il prezzo?","Foto del tessuto","200 m sabbia e 3 rotoli bronzo","Sì, confermo"],
+  script:["Buongiorno!","Mi chiamo Giulia, ho un negozio di tende a Milano","Quali colori avete?","Qual è il prezzo al metro?","300 m perla e 4 rotoli sabbia","Sì, confermo"]},
+ pl:{tab:"Polski",tr:"Lehçe",loc:"pl-PL",cur:"PLN",rate:3.65,u:"m",city:"Warszawa",
+  colors:["Perłowy","Piaskowy","Brązowy","Srebrny"],prod:"żakard szenilowy OMMA",
+  greet:"Dzień dobry! 👋 Jestem Anna, konsultantka online OMMA. Proszę podać swoje imię 🙂",
+  hi:"Miło mi, {n}! 😊 Produkujemy wysokiej jakości tkaniny zasłonowe w Turcji i sprzedajemy wyłącznie hurtowo. Mogę pokazać kolory, obliczyć cenę albo od razu przyjąć zamówienie.",
+  catalog:"{n}, oto nasz bestseller — {prod}, szerokość 280 cm. Dostępny w 4 kolorach:",
+  price:"Cena wynosi {p} za metr.\nRabaty hurtowe:\n• od 150 m — 5%\n• od 300 m — 8%\n• od 600 m — 12%\n🎁 {n}, na pierwsze zamówienie przysługuje dodatkowy rabat osobisty 3%.\nWystarczy napisać kolor i ilość, np. „200 m piaskowy”.",
+  photos:"Oczywiście, {n}! Oto faktura tkaniny z bliska i tkanina w naszym showroomie:",
+  added:"Świetnie, {n}! Oto zamówienie:",ask:"Czy potwierdzić zamówienie?",
+  total:"Razem",sub:"Suma",tier:"Rabat hurtowy",pers:"Rabat osobisty",pay:"Do zapłaty",
+  nocart:"{n}, zamówienie jest jeszcze puste. Wystarczy napisać kolor i ilość, np. „200 m piaskowy”.",
+  askColor:"Jaki kolor wybrać? Mamy: perłowy, piaskowy, brązowy i srebrny.",
+  confirmed:"Zamówienie nr {id} potwierdzone ✅\nDziękuję, {n}! Nasz menedżer wyśle fakturę proforma i koszt dostawy jutro do 10:00 (czasu stambulskiego). Cieszymy się na współpracę! 🤝",
+  fallback:"{n}, przekażę pytanie naszemu menedżerowi, który wkrótce odpowie. W międzyczasie mogę pokazać kolory, obliczyć cenę lub przyjąć zamówienie.",
+  thanks:"Zawsze chętnie pomogę, {n}! 🌿",
+  upsell:"💡 Wystarczy dodać {x} m, a rabat wzrośnie do {y}%.",
+  chips:["Pokaż kolory","Jaka jest cena?","Zdjęcia tkaniny","200 m piaskowy i 3 rolki brązowy","Tak, potwierdzam"],
+  script:["Dzień dobry!","Mam na imię Katarzyna, prowadzę sklep z zasłonami w Warszawie","Jakie macie kolory?","Jaka jest cena za metr?","200 m srebrny i 5 rolek perłowy","Tak, potwierdzam"]},
+ ar:{tab:"العربية",tr:"Arapça",loc:"ar-AE-u-nu-latn",cur:"AED",rate:3.67,u:"م",city:"دبي",rtl:true,
+  colors:["لؤلؤي","رملي","برونزي","فضي"],prod:"جاكار شنيل OMMA",
+  greet:"مرحباً! 👋 أنا آنا، مستشارة OMMA عبر الإنترنت. ما اسمك الكريم؟",
+  hi:"تشرفنا يا {n}! 😊 نحن ننتج أقمشة ستائر فاخرة في تركيا ونبيع بالجملة فقط. يمكنني أن أعرض عليك الألوان، أو أحسب لك السعر، أو أسجّل طلبك مباشرة.",
+  catalog:"{n}، هذا القماش الأكثر مبيعاً لدينا — {prod}، بعرض 280 سم. متوفر بـ 4 ألوان:",
+  price:"السعر {p} للمتر.\nخصومات الجملة:\n• من 150 م — 5%\n• من 300 م — 8%\n• من 600 م — 12%\n🎁 {n}، لك أيضاً خصم شخصي 3% على طلبك الأول.\nاكتب اللون والكمية، مثلاً: «200 م رملي».",
+  photos:"بكل سرور يا {n}! هذه صورة قريبة لملمس القماش، وصورة القماش في صالة العرض:",
+  added:"ممتاز يا {n}! هذا طلبك:",ask:"هل أؤكد الطلب؟",
+  total:"المجموع",sub:"المبلغ",tier:"خصم الجملة",pers:"الخصم الشخصي",pay:"المبلغ المستحق",
+  nocart:"{n}، طلبك فارغ حالياً. اكتب اللون والكمية، مثلاً: «200 م رملي».",
+  askColor:"أي لون تفضّل؟ لدينا: لؤلؤي، رملي، برونزي، فضي.",
+  confirmed:"تم تأكيد الطلب رقم {id} ✅\nشكراً لك يا {n}! سيرسل لك مديرنا الفاتورة المبدئية وتكلفة الشحن غداً قبل الساعة 10:00 (بتوقيت إسطنبول). يسعدنا التعاون معك! 🤝",
+  fallback:"{n}، سأحوّل سؤالك إلى مديرنا وسيرد عليك قريباً. وفي الأثناء يمكنني عرض الألوان أو حساب السعر أو تسجيل طلبك.",
+  thanks:"في خدمتك دائماً يا {n}! 🌿",
+  upsell:"💡 أضف {x} م فقط ويرتفع خصمك إلى {y}%.",
+  chips:["اعرض الألوان","كم السعر؟","صور القماش","200 م رملي و 3 لفات برونزي","نعم، أؤكد"],
+  script:["السلام عليكم","اسمي أحمد، عندي محل ستائر في دبي","ما هي الألوان المتوفرة؟","كم سعر المتر؟","500 م فضي و 4 لفات رملي","نعم، أؤكد"]},
+ tr:{tab:"Türkçe",tr:"Türkçe",loc:"tr-TR",cur:"TRY",rate:47,u:"m",city:"Bakü",
+  colors:["İnci","Kum","Bronz","Gümüş"],prod:"OMMA Jakar Şönil",
+  greet:"Merhaba! 👋 Ben Anna, OMMA'nın online danışmanıyım. Size nasıl hitap edeyim?",
+  hi:"Memnun oldum {n}! 😊 Türkiye'de premium perdelik kumaş üretiyoruz ve sadece toptan satış yapıyoruz. Renkleri gösterebilir, fiyat hesaplayabilir ya da siparişinizi hemen alabilirim.",
+  catalog:"{n}, en çok satan kumaşımız: {prod}, en 280 cm. 4 renk seçeneği var:",
+  price:"Metre fiyatı {p}.\nToptan indirimler:\n• 150 m ve üzeri: %5\n• 300 m ve üzeri: %8\n• 600 m ve üzeri: %12\n🎁 {n}, ilk siparişinize özel %3 kişisel indirim de var.\nRenk ve miktarı yazmanız yeterli, örneğin: \"200 m kum\".",
+  photos:"Tabii {n}! Kumaşın yakın çekim dokusu ve showroomdaki görünümü:",
+  added:"Harika {n}! Siparişiniz:",ask:"Siparişi onaylayayım mı?",
+  total:"Toplam",sub:"Tutar",tier:"Toptan indirim",pers:"Kişisel indirim",pay:"Ödenecek",
+  nocart:"{n}, siparişiniz henüz boş. Renk ve miktarı yazmanız yeterli, örneğin: \"200 m kum\".",
+  askColor:"Hangi rengi istersiniz? Renklerimiz: İnci, Kum, Bronz, Gümüş.",
+  confirmed:"{id} numaralı sipariş onaylandı ✅\nTeşekkürler {n}! Proforma faturayı ve kargo ücretini yarın saat 10:00'a kadar size iletiyoruz. İyi çalışmalar! 🤝",
+  fallback:"{n}, sorunuzu yöneticimize iletiyorum, en kısa sürede dönüş yapacak. Bu arada renkleri gösterebilir, fiyat hesaplayabilir ya da siparişinizi alabilirim.",
+  thanks:"Rica ederiz {n}, her zaman buradayız! 🌿",
+  upsell:"💡 {x} m daha eklerseniz indirim oranınız %{y} olur.",
+  chips:["Renkleri göster","Fiyat nedir?","Kumaş fotoğrafları","200 m kum ve 3 top bronz","Evet, onaylıyorum"],
+  script:["Merhaba","Adım Aysel, Bakü'de perde mağazam var","Hangi renkler var?","Metre fiyatı nedir?","150 m inci ve 2 top gümüş","Evet, onaylıyorum"]}
+};
+const ORDER=["ru","en","de","fr","it","pl","ar","tr"];
+
+const $=s=>document.querySelector(s);
+const chat=$("#chat"), chipsEl=$("#chips"), inp=$("#inp"), logEl=$("#log");
+let S, lang="ru", run=0, orderNo=2611, busy=false;
+
+function fresh(){return {name:null,cart:[0,0,0,0],last:null,first:true,confirmed:false,asked:false,id:null};}
+const esc=t=>t.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const now=()=>new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const usd=v=>new Intl.NumberFormat(L[lang].loc,{style:"currency",currency:"USD",minimumFractionDigits:2}).format(v);
+const loc=v=>new Intl.NumberFormat(L[lang].loc,{style:"currency",currency:L[lang].cur,maximumFractionDigits:0}).format(v*L[lang].rate);
+const trUsd=v=>new Intl.NumberFormat("tr-TR",{style:"currency",currency:"USD"}).format(v);
+const trTl=v=>new Intl.NumberFormat("tr-TR",{style:"currency",currency:"TRY",maximumFractionDigits:0}).format(v*47);
+const num=v=>new Intl.NumberFormat(L[lang].loc).format(v);
+const pct=x=>lang==="tr"?"%"+x:(["de","fr"].includes(lang)?x+" %":x+"%");
+const col=()=>lang==="fr"?" :":":";
+
+function voc(n){ // Lehçe hitap hâli: Katarzyna → Katarzyno
+  return lang==="pl"&&/[^i]a$/.test(n)?n.slice(0,-1)+"o":n;}
+function fill(t,o={}){
+  if(!S.name) t=t.replace(/\{n\}[,،]\s*/g,"").replace(/[ ,]*(يا )?\{n\}/g,"");
+  return t.replace(/\{(\w+)\}/g,(_,k)=>k==="n"?voc(S.name||""):(o[k]??""))
+          .replace(/^, /,"").replace(/ ,/g,",");}
+function log(t){ if(logEl.dataset.fresh){logEl.innerHTML="";delete logEl.dataset.fresh;}
+  const li=document.createElement("li");li.textContent=t;logEl.appendChild(li);logEl.scrollTop=1e6;}
+
+function addMsg(dir,text,extra=""){
+  const d=document.createElement("div");d.className="msg "+dir;
+  d.innerHTML=esc(text)+extra+`<time>${now()}</time>`;
+  chat.appendChild(d);chat.scrollTop=1e6;}
+async function bot(text,extra="",myRun){
+  const t=document.createElement("div");t.className="typing";t.innerHTML="<i></i><i></i><i></i>";
+  chat.appendChild(t);chat.scrollTop=1e6;$("#status").textContent="yazıyor…";
+  await sleep(Math.min(1700,650+text.length*6));
+  t.remove();$("#status").textContent="çevrimiçi";
+  if(myRun!==run)return;
+  addMsg("out",text,extra);}
+
+function detect(t){
+  if(/[؀-ۿ]/.test(t))return "ar";
+  if(/[а-яё]/i.test(t))return "ru";
+  const sc={pl:/[ąćęłńśźż]|(?<![\p{L}])(jest|jaka|jakie|mam|proszę|dzień|czy|zamówienie)(?![\p{L}])/iu,
+    tr:/[ğış]|(?<![\p{L}])(merhaba|fiyat|renk|renkler|adım|evet|nedir|ve|top|var)(?![\p{L}])/iu,
+    de:/[äöüß]|(?<![\p{L}])(ich|und|was|welche|guten|haben|sie|preis|farben)(?![\p{L}])/iu,
+    fr:/(?<![\p{L}])(bonjour|je|quel|quels|est|oui|vous|avez|prix|coloris)(?![\p{L}])/iu,
+    it:/(?<![\p{L}])(buongiorno|chiamo|quale|quali|sì|ciao|prezzo|avete|colori)(?![\p{L}])/iu,
+    en:/(?<![\p{L}])(hi|hello|what|how|much|is|it|can|please|want|need|my|the|and|price|yes|colou?rs?|you|have)(?![\p{L}])/iu};
+  for(const k in sc) if(sc[k].test(t)) return k;
+  return null;}
+
+function calc(){
+  const m=S.cart.reduce((a,b)=>a+b,0), sub=m*PRICE;
+  const tier=(TIERS.find(([q])=>m>=q)||[0,0])[1];
+  const tierD=sub*tier/100, persD=S.first?(sub-tierD)*PERSONAL/100:0;
+  const next=[...TIERS].reverse().find(([q])=>m<q);
+  return {m,sub,tier,tierD,persD,total:sub-tierD-persD,next};}
+
+function parseItems(t){
+  t=t.replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d));
+  const segs=t.split(/\s(?:и|and|und|et|e|i|و|ve|y)\s|[,;+]|\sو/iu);
+  const out=[];
+  for(const s of segs){
+    const nm=s.match(/(\d+(?:[.,]\d+)?)/); if(!nm)continue;
+    let q=parseFloat(nm[1].replace(",","."));
+    if(RX.roll.test(s))q*=ROLL;
+    const c=COLOR_RX.findIndex(r=>r.test(s));
+    out.push({q:Math.round(q),c:c<0?null:c});}
+  return out;}
+
+function summary(){
+  const T=L[lang],c=calc(),u=T.u;
+  let s="";
+  S.cart.forEach((m,i)=>{ if(m) s+=`\n• ${T.colors[i]} — ${num(m)} ${u} × ${usd(PRICE)} = ${usd(m*PRICE)}`;});
+  s+=`\n\n${T.total}${col()} ${num(c.m)} ${u}\n${T.sub}${col()} ${usd(c.sub)}`;
+  if(c.tier) s+=`\n${T.tier} ${pct(c.tier)}${col()} −${usd(c.tierD)}`;
+  if(c.persD) s+=`\n${T.pers} ${pct(PERSONAL)}${col()} −${usd(c.persD)}`;
+  s+=`\n${T.pay}${col()} ${usd(c.total)} (≈ ${loc(c.total)})`;
+  return s;}
+
+function panel(){
+  const T=L[lang],c=calc();
+  $("#pName").textContent=S.name||"—";
+  $("#pLang").textContent=S.name||S.started?T.tr:"—";
+  const st=$("#pState");
+  if(S.confirmed){st.textContent=`Onaylandı · ${S.id} · size bildirildi`;st.className="pill ok";}
+  else if(c.m){st.textContent="Sipariş hazırlanıyor";st.className="pill";}
+  else if(S.started){st.textContent="Müşteriyle yazışılıyor";st.className="pill";}
+  else{st.textContent="Yazışma bekleniyor";st.className="pill";}
+  if(!c.m){$("#pTable").innerHTML='<p class="empty">Müşteri renk ve miktar yazınca sipariş burada anında oluşur.</p>';return;}
+  let r="";
+  S.cart.forEach((m,i)=>{ if(m) r+=`<tr><td>OMMA Jakar Şönil · ${COLOR_TR[i]}</td><td class="n">${m.toLocaleString("tr-TR")} m <small style="color:var(--muted)">(${(m/ROLL).toLocaleString("tr-TR",{maximumFractionDigits:1})} top)</small></td><td class="n">${trUsd(m*PRICE)}</td></tr>`;});
+  r+=`<tr><td>Ara toplam</td><td class="n">${c.m.toLocaleString("tr-TR")} m</td><td class="n">${trUsd(c.sub)}</td></tr>`;
+  if(c.tier) r+=`<tr class="disc"><td colspan="2">Toptan indirim %${c.tier}</td><td class="n">−${trUsd(c.tierD)}</td></tr>`;
+  if(c.persD) r+=`<tr class="disc"><td colspan="2">Kişisel indirim %${PERSONAL} (ilk sipariş)</td><td class="n">−${trUsd(c.persD)}</td></tr>`;
+  r+=`<tr class="tot"><td colspan="2">Toplam</td><td class="n">${trUsd(c.total)}<br><small style="color:var(--muted);font-weight:500">≈ ${trTl(c.total)}</small></td></tr>`;
+  $("#pTable").innerHTML=`<table><thead><tr><th>Ürün</th><th class="n">Miktar</th><th class="n">Tutar</th></tr></thead><tbody>${r}</tbody></table>`;}
+
+function catalogHtml(){
+  const T=L[lang];
+  return `<div class="grid">${T.colors.map((c,i)=>`<figure><img src="${COLOR_IMG[i]}" alt="${esc(c)}"><figcaption>${esc(c)} · ${usd(PRICE)}/${T.u}</figcaption></figure>`).join("")}</div>`;}
+const photosHtml=()=>`<div class="one"><img src="img/doku.jpg" alt=""><img src="img/showroom.jpg" alt=""></div>`;
+
+async function handle(text,myRun){
+  S.started=true;
+  const d=detect(text);
+  if(d&&d!==lang){ setLang(d,true); log(`Dil algılandı: ${L[d].tr} → cevaplar ${L[d].tr}`);}
+  else if(!S.langLogged){ log(`Dil algılandı: ${L[lang].tr}`);}
+  S.langLogged=true;
+  const T=L[lang];
+  const items=parseItems(text);
+  const wants={price:RX.price.test(text),photo:RX.photo.test(text),catalog:RX.catalog.test(text)&&!items.length};
+  let did=false;
+
+  if(!S.name){
+    let n=null; const m=text.match(RX.name);
+    if(m&&(/[؀-ۿ]/.test(m[1])||m[1][0]!==m[1][0].toLowerCase())) n=m[1];
+    else if(!RX.greet.test(text)&&!/\d/.test(text)&&!wants.price&&!wants.photo&&!wants.catalog&&text.trim().split(/\s+/).length<=3)
+      n=text.trim().split(/\s+/)[0];
+    if(n){ n=n.replace(/[.,!?،]+$/,""); n=n[0].toUpperCase()+n.slice(1); S.name=n;
+      log(`Müşteri adı kaydedildi: ${n} → bundan sonra adıyla hitap`);
+      await bot(fill(T.hi),"",myRun); did=true; panel();}
+    else if(!S.asked){ S.asked=true; await bot(T.greet,"",myRun); log("Karşılama yapıldı, adı soruldu");
+      if(!items.length&&!wants.price&&!wants.photo&&!wants.catalog){panel();return;} }
+  }
+  if(myRun!==run)return;
+
+  if(items.length){
+    if(S.confirmed){ S.confirmed=false; S.first=false; S.cart=[0,0,0,0]; } // yeni sipariş
+    let added=false;
+    for(const it of items){ const c=it.c??S.last;
+      if(c===null||c===undefined)continue; S.cart[c]+=it.q; S.last=c; added=true;
+      log(`Sepete eklendi: ${COLOR_TR[c]} ${it.q} m`);}
+    if(!added){ await bot(T.askColor,catalogHtml(),myRun); log("Renk belirtilmedi → renk kartelası gönderildi"); panel(); return;}
+    const c=calc();
+    let extra="";
+    if(c.next&&c.next[0]-c.m<=150) extra="\n\n"+fill(T.upsell,{x:num(c.next[0]-c.m),y:c.next[1]});
+    await bot(fill(T.added)+"\n"+summary()+"\n\n"+T.ask+extra,"",myRun);
+    log(`Fiyat anında hesaplandı: ${trUsd(c.total)}`+(c.tier?` (toptan %${c.tier}`:"")+(c.persD?` + kişisel %${PERSONAL})`:c.tier?")":""));
+    if(extra) log(`Satış artırma önerisi: +${c.next[0]-c.m} m → %${c.next[1]} indirim`);
+    panel(); return;}
+
+  if(RX.confirm.test(text)&&!did){
+    const c=calc();
+    if(!c.m){ await bot(fill(T.nocart),"",myRun); panel(); return;}
+    if(!S.confirmed){ S.confirmed=true; S.id="OM-"+(orderNo++);
+      await bot(fill(T.confirmed,{id:S.id}),"",myRun);
+      log(`Sipariş onaylandı: ${S.id} · ${trUsd(c.total)} → size Türkçe özet gönderildi`);
+      panel(); return;}
+  }
+  if(wants.catalog){ await bot(fill(T.catalog,{prod:T.prod}),catalogHtml(),myRun); log("Renk kartelası (4 fotoğraf) gönderildi"); did=true;}
+  if(wants.photo){ await bot(fill(T.photos),photosHtml(),myRun); log("Doku ve showroom fotoğrafları gönderildi"); did=true;}
+  if(wants.price){ await bot(fill(T.price,{p:usd(PRICE)}),"",myRun); log(`Fiyat ve indirim kademeleri anlatıldı${S.name?`, ${S.name} için %3 kişisel indirim tanımlandı`:""}`); did=true;}
+  if(!did&&RX.thanks.test(text)){ await bot(fill(T.thanks),"",myRun); did=true;}
+  if(!did&&S.name){ await bot(fill(T.fallback),"",myRun); log("Anlaşılmayan soru → yöneticiye iletildi");}
+  else if(!did&&!S.name&&S.asked&&!RX.greet.test(text)){ await bot(T.greet,"",myRun);}
+  panel();}
+
+async function send(text,myRun){
+  if(!text.trim())return;
+  addMsg("in",text);
+  await sleep(350);
+  if(myRun!==run)return;
+  await handle(text,myRun);}
+
+function renderChips(){
+  const T=L[lang];
+  chipsEl.className="chips"+(T.rtl?" rtl":"");
+  chipsEl.innerHTML="";
+  T.chips.forEach(c=>{const b=document.createElement("button");b.type="button";b.textContent=c;
+    b.onclick=()=>{ if(busy)return; stopAuto(); userSend(c);}; chipsEl.appendChild(b);});
+  chat.classList.toggle("rtl",!!T.rtl);
+  inp.dir=T.rtl?"rtl":"ltr";}
+
+function renderTabs(){
+  const tabs=$("#tabs");tabs.innerHTML="";
+  ORDER.forEach(k=>{const b=document.createElement("button");b.role="tab";b.setAttribute("role","tab");
+    b.setAttribute("aria-selected",k===lang);b.innerHTML=`${L[k].tab} <small>${L[k].tr}</small>`;
+    b.onclick=()=>{reset(k);autoplay();};tabs.appendChild(b);});}
+
+function setLang(k,keep){ lang=k; renderTabs(); renderChips(); if(!keep)reset(k);}
+
+function reset(k=lang){
+  run++; busy=false; lang=k; S=fresh();
+  chat.innerHTML='<div class="day">Bugün</div>';
+  logEl.innerHTML="<li>Müşteri mesajı bekleniyor…</li>"; logEl.dataset.fresh="1";
+  renderTabs(); renderChips(); panel();}
+
+function stopAuto(){ if(auto){ run++; auto=false; $("#play").textContent="▶ Konuşmayı izle"; $("#status").textContent="çevrimiçi"; chat.querySelectorAll(".typing").forEach(t=>t.remove()); } }
+let auto=false;
+async function autoplay(){
+  reset(lang); auto=true; const my=run; $("#play").textContent="■ Durdur";
+  for(const line of L[lang].script){
+    await sleep(900); if(my!==run)return;
+    await send(line,my); if(my!==run)return;}
+  auto=false; $("#play").textContent="▶ Tekrar izle";}
+
+async function userSend(t){ busy=true; const my=run; await send(t,my); if(my===run)busy=false; }
+
+$("#form").onsubmit=e=>{e.preventDefault(); const t=inp.value; if(!t.trim()||busy)return; stopAuto(); inp.value=""; userSend(t);};
+$("#play").onclick=()=>{ if(auto){stopAuto();return;} autoplay();};
+$("#reset").onclick=()=>{ stopAuto(); reset(lang);};
+$("#cta").href="https://wa.me/905317755912?text="+encodeURIComponent("Ferhat Bey, OMMA için hazırladığınız WhatsApp asistanı demosunu inceledim. Görüşme ayarlayalım.");
+
+reset("ru");
+setTimeout(autoplay,700);
+</script>
+</body>
+</html>
