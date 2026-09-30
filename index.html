@@ -196,10 +196,6 @@ tr.disc td{color:var(--ok)}
   </div>
 </section>
 
-<section class="cta">
-  <div><h2>Beğendiyseniz 15 dakikalık kısa bir görüşme yapalım</h2><p>Ferhat · 0531 775 59 12</p></div>
-  <a id="cta" href="#">WhatsApp'tan yazın</a>
-</section>
 
 </div>
 
@@ -565,7 +561,6 @@ async function userSend(t){ busy=true; const my=run; await send(t,my); if(my===r
 $("#form").onsubmit=e=>{e.preventDefault(); const t=inp.value; if(!t.trim()||busy)return; stopAuto(); inp.value=""; userSend(t);};
 $("#play").onclick=()=>{ if(auto){stopAuto();return;} autoplay();};
 $("#reset").onclick=()=>{ stopAuto(); reset(lang);};
-$("#cta").href="https://wa.me/905317755912?text="+encodeURIComponent("Ferhat Bey, OMMA için hazırladığınız WhatsApp asistanı demosunu inceledim. Görüşme ayarlayalım.");
 
 reset("ru");
 setTimeout(autoplay,700);
